@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    branches: 
+      - master
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, windows, darwin]
+        goarch: ["386", amd64]
+        exclude:
+          - goarch: arm
+            goos: darwin
+          - goarch: arm
+            goos: windows 
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+
+      - name: Go Release Binaries
+        uses: wangyoucao577/go-release-action@v1.17
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
+          release_tag: dev
+          overwrite: true
+      
